@@ -5,7 +5,7 @@ namespace src\Request;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
-class LoggedRequestProxy implements RequestInterface
+class LoggedRequestDecorator implements RequestInterface
 {
     /**
      * @var RequestInterface

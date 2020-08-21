@@ -29,13 +29,11 @@ final class GuzzleClient extends AbstractHttpTransport
         try {
             $response = $this->client->request($method, $path, $data);
             $body = $response->getBody();
-            $status = $response->getStatusCode();
         } catch (GuzzleException $exception) {
             $body = null;
-            $status = 500;
         }
 
-        return ['body' => $body, 'status' => $status];
+        return $body;
     }
 
     /**

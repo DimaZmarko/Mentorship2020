@@ -3,18 +3,16 @@ require 'vendor/autoload.php';
 
 use src\ApiClient;
 use src\httpClients\GuzzleClient;
-use src\Request\LoggedRequestProxy;
+use src\Request\LoggedRequestDecorator;
 use src\Request\Request;
 use src\Request\RequestParamsBuilderInterface;
 use src\Request\SearchByBreedParamsBuilder;
 
 $httpClient = new GuzzleClient();
 
-$api = new ApiClient($httpClient, true);
+$api = new ApiClient($httpClient);
 
-$cachedClient = new \src\ApiClientCacheProxy($api);
-
-$categories = $cachedClient->categories();
+$categories = $api->categories();
 
 $requestParams = (new SearchByBreedParamsBuilder('beng'))
     ->size(RequestParamsBuilderInterface::SIZE_FULL)
@@ -24,7 +22,7 @@ $requestParams = (new SearchByBreedParamsBuilder('beng'))
     ->create();
 
 $searchRequest = new Request($requestParams);
-$searchResponse = $cachedClient->searchImages(new LoggedRequestProxy($searchRequest));
+$searchResponse = $api->searchImages(new LoggedRequestDecorator($searchRequest));
 
 $searchStatusCode = $searchResponse->getStatusCode();
 $searchData = $searchResponse->getData();
