@@ -4,19 +4,18 @@ namespace src;
 
 use src\httpClients\HttpTransportInterface;
 use src\Request\RequestInterface;
+use src\Response\LoggedResponseProxy;
 use src\Response\Response;
 use src\Response\ResponseInterface;
 use src\Response\ResponseToArrayDecorator;
+use src\Stub\Stub;
 
-class ApiClient
+class ApiClient implements CatApiInterface
 {
-    const API_PATH = 'https://api.thecatapi.com/v1';
-    const API_END_POINTS = [
-        'search_images' => self::API_PATH . '/images/search',
-        'get_images' => self::API_PATH . '/images',
-        'get_breeds' => self::API_PATH . '/breeds',
-        'get_categories' => self::API_PATH . '/categories',
-    ];
+    /**
+     * @var bool
+     */
+    private $isLogged;
 
     /**
      * @var HttpTransportInterface
@@ -26,58 +25,122 @@ class ApiClient
     /**
      * ApiClient constructor.
      * @param HttpTransportInterface $httpClient
+     * @param bool $isLogged
      */
-    public function __construct(HttpTransportInterface $httpClient)
+    public function __construct(HttpTransportInterface $httpClient, $isLogged = false)
     {
         $this->httpClient = $httpClient;
+        $this->isLogged = $isLogged;
     }
 
     /**
-     * @param RequestInterface $request
-     * @return mixed
+     * @return bool
      */
-    public function categories(RequestInterface $request = null)
+    public function getIsLogged(): bool
     {
-        return new Response($this->httpClient->get(
-            self::API_END_POINTS['get_categories'],
-           $request === null ?:['body' => $request->getbody(), 'headers' => $request->getHeaders()]
-        ));
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function breeds(RequestInterface $request)
-    {
-        return new Response($this->httpClient->get(
-            self::API_END_POINTS['get_breeds'],
-            ['body' => $request->getbody(), 'headers' => $request->getHeaders()]
-        ));
-    }
-
-    /**
-     * @param RequestInterface $request
-     * @return mixed
-     */
-    public function images(RequestInterface $request)
-    {
-        return new Response($this->httpClient->get(
-            self::API_END_POINTS['get_images'],
-            ['body' => $request->getbody(), 'headers' => $request->getHeaders()]
-        ));
+        return $this->isLogged;
     }
 
     /**
      * @param RequestInterface $request
      * @return ResponseInterface
      */
-    public function searchImages(RequestInterface $request)
+    public function categories(RequestInterface $request = null): ResponseInterface
     {
-        $response = new Response($this->httpClient->get(
+        $guzzleResponse = $this->httpClient->get(
+            self::API_END_POINTS['get_categories'],
+            $request === null ?: ['body' => $request->getbody(), 'headers' => $request->getHeaders()]
+        );
+
+        if (!in_array($guzzleResponse['status'], self::VALID_STATUES, true)) {
+            $responseBody = Stub::getCategories();
+        } else {
+            $responseBody = $guzzleResponse['body'];
+        }
+
+        $response = new Response($responseBody);
+
+        if ($this->getIsLogged()) {
+            return new LoggedResponseProxy($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function breeds(RequestInterface $request): ResponseInterface
+    {
+        $guzzleResponse = $this->httpClient->get(
+            self::API_END_POINTS['get_breeds'],
+            array('body' => $request->getbody(), 'headers' => $request->getHeaders())
+        );
+
+        if (!in_array($guzzleResponse['status'], self::VALID_STATUES, true)) {
+            $responseBody = Stub::getBreed();
+        } else {
+            $responseBody = $guzzleResponse['body'];
+        }
+
+        $response = new Response($responseBody);
+
+        if ($this->getIsLogged()) {
+            return new LoggedResponseProxy($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function images(RequestInterface $request): ResponseInterface
+    {
+        $guzzleResponse = $this->httpClient->get(
+            self::API_END_POINTS['get_images'],
+            array('body' => $request->getbody(), 'headers' => $request->getHeaders())
+        );
+
+        if (!in_array($guzzleResponse['status'], self::VALID_STATUES, true)) {
+            $responseBody = Stub::getImages();
+        } else {
+            $responseBody = $guzzleResponse['body'];
+        }
+
+        $response = new Response($responseBody);
+
+        if ($this->getIsLogged()) {
+            return new LoggedResponseProxy($response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @return ResponseInterface
+     */
+    public function searchImages(RequestInterface $request): ResponseInterface
+    {
+        $guzzleResponse = $this->httpClient->get(
             self::API_END_POINTS['search_images'],
-            ['body' => $request->getbody(), 'headers' => $request->getHeaders()]
-        ));
+            array('body' => $request->getbody(), 'headers' => $request->getHeaders())
+        );
+
+        if (!in_array($guzzleResponse['status'], self::VALID_STATUES, true)) {
+            $responseBody = Stub::getImages();
+        } else {
+            $responseBody = $guzzleResponse['body'];
+        }
+
+        $response = new Response($responseBody);
+
+        if ($this->getIsLogged()) {
+            $response = new LoggedResponseProxy($response);
+        }
 
         return new ResponseToArrayDecorator($response);
     }

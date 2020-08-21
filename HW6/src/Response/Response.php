@@ -15,14 +15,21 @@ class Response implements ResponseInterface
     protected $status;
 
     /**
-     * Response constructor.
-     * @param $data
-     * @param int $status
+     * @var bool
      */
-    public function __construct($data = '', int $status = 200)
+    protected $isCached;
+
+    /**
+     * Response constructor.
+     * @param string $data
+     * @param int $status
+     * @param bool $isCached
+     */
+    public function __construct($data = '', int $status = 200, $isCached = false)
     {
         $this->data = $this->setData($data);
         $this->status = $status;
+        $this->isCached = $isCached;
     }
 
     /**
@@ -33,6 +40,9 @@ class Response implements ResponseInterface
         return $this->data;
     }
 
+    /**
+     * @return int|mixed
+     */
     public function getStatusCode()
     {
         return $this->status;
