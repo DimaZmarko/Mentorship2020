@@ -19,5 +19,4 @@ interface ResponseInterface
      * @return mixed
      */
     public function getStatusCode();
-
 }
