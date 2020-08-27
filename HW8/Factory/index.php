@@ -1,4 +1,6 @@
-<?php require_once 'autoloader.php';
+<?php
+
+require_once 'autoloader.php';
 
 $autoPark = new AutoPark();
 $fordFactory = new \factories\FordExplorerFactory();
