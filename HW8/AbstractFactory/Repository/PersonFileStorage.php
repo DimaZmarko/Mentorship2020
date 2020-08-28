@@ -61,7 +61,9 @@ class PersonFileStorage implements PersonRepositoryInterface
             return false;
         });
 
-        return array_shift($personsEntries);
+        $personEntry = array_shift($personsEntries);
+
+        return $personEntry ? Person::fromStdClass($personEntry) : null;
     }
 
     /**
