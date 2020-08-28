@@ -24,7 +24,7 @@ class PersonFileStorage implements PersonRepositoryInterface
      */
     public function savePerson(Person $person): void
     {
-        $personsEntries = $this->getEntries();
+        $personsEntries = json_decode(file_get_contents($this->file), false);
         $personsEntries[] = $person->jsonSerialize();
 
         file_put_contents($this->file, json_encode($personsEntries));
@@ -35,7 +35,7 @@ class PersonFileStorage implements PersonRepositoryInterface
      */
     public function readPeople(): array
     {
-        $personsEntries = $this->getEntries();
+        $personsEntries = json_decode(file_get_contents($this->file), false);
 
         $persons = [];
         foreach ($personsEntries as $personsEntry) {
@@ -51,7 +51,7 @@ class PersonFileStorage implements PersonRepositoryInterface
      */
     public function readPerson(string $firstName): ?Person
     {
-        $personsEntries = $this->getEntries();
+        $personsEntries = json_decode(file_get_contents($this->file), false);
 
         $personsEntries = array_filter($personsEntries, function ($obj) use ($firstName) {
             if (isset($obj->name) && $obj->name === $firstName) {
@@ -61,16 +61,11 @@ class PersonFileStorage implements PersonRepositoryInterface
             return false;
         });
 
-        $personEntry = array_shift($personsEntries);
+        foreach ($personsEntries as $personsEntry) {
+            $person = Person::fromStdClass($personsEntry);
+            break;
+        }
 
-        return $personEntry ? Person::fromStdClass($personEntry) : null;
-    }
-
-    /**
-     * @return mixed
-     */
-    private function getEntries()
-    {
-        return json_decode(file_get_contents($this->file), false);
+        return $person ?? null;
     }
 }
