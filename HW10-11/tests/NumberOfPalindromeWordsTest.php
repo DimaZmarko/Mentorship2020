@@ -2,9 +2,6 @@
 
 namespace Tests;
 
-const ENG_TEXT = 'Lorem ipsum dolor stats sit deified amet. Malayalam consectetur';
-const UKR_TEXT = 'Тут зараз може бути багато тексту але його не буде.';
-
 class NumberOfPalindromeWordsTest extends BaseTest
 {
 	public function positiveDataProvider()

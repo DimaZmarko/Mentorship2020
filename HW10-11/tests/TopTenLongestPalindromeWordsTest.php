@@ -2,9 +2,6 @@
 
 namespace Tests;
 
-const ENG_TEXT = 'Lorem ipsum dolor stats sit deified amet. Malayalam consectetur level adipiscing elit, sed do eiusmod kayak tempor incididunt ut labore et dolore magna aliqua. Ut repaper enim ad minim veniam, quis nostrud boob exercitation reviver ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-const UKR_TEXT = 'Тут зараз може бути багато тексту але його не буде.';
-
 class TopTenLongestPalindromeWordsTest extends BaseTest
 {
 	public function positiveDataProvider()
