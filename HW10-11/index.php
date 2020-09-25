@@ -1,41 +1,6 @@
 <?php require_once 'src/autoloader.php'; ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <title>Text analyzer</title>
-
-    <link href="public/css/bootstrap.min.css" rel="stylesheet">
-    <link href="public/css/custom.css" rel="stylesheet">
-</head>
-
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">Text analyzer</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#uploadModal" data-toggle="modal">Upload new Text</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<?php require_once 'template-parts/header.php' ?>
 
 <div class="container">
     <div class="row text-center my-4">
@@ -47,8 +12,17 @@
             $entry = file_get_contents($_POST['link']);
             $text = htmlspecialchars($entry);
         } elseif (isset($_FILES['file']) && $_FILES['file']['size'] !== 0 && $_FILES['file']['error'] !== 4) {
-            $entry = file_get_contents($_FILES['file']['tmp_name']);
-            $text = htmlspecialchars($entry);
+            if ($_FILES['file']['type'] === 'application/xml') {
+                $document = new DOMDocument();
+                $document->loadXml(file_get_contents($_FILES['file']['tmp_name']));
+                $text = $document->documentElement->textContent;
+            } elseif ($_FILES['file']['type'] === 'text/html') {
+                $entry = file_get_contents($_FILES['file']['tmp_name']);
+                $text = htmlspecialchars($entry);
+            } else {
+                $entry = file_get_contents($_FILES['file']['tmp_name']);
+                $text = htmlspecialchars($entry);
+            }
         }
 
         if ($text) {
@@ -95,15 +69,4 @@
     </div>
 </div>
 
-<footer class="py-5 bg-dark">
-    <div class="container">
-        <p class="m-0 text-center text-white">My Website 2020</p>
-    </div>
-</footer>
-
-<!-- Bootstrap core JavaScript -->
-<script src="public/js/jquery.min.js"></script>
-<script src="public/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+<?php require_once 'template-parts/footer.php'; ?>
