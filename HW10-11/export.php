@@ -55,7 +55,7 @@ if (isset($_POST['report_id'])) {
         $writer->save($reportName);
 
         header("Content-disposition: attachment; filename=$reportName");
-        header("Content-type: application/pdf");
+        header("Content-type: application/vnd.ms-excel");
         readfile($reportName);
     } elseif ($_POST['export'] === 'csv') {
         $reportName = 'report' . rand() . '.csv';
@@ -63,7 +63,7 @@ if (isset($_POST['report_id'])) {
         $writer->save($reportName);
 
         header("Content-disposition: attachment; filename=$reportName");
-        header("Content-type: application/pdf");
+        header("Content-type: application/csv");
         readfile($reportName);
     } elseif ($_POST['export'] === 'pdf') {
         $reportName = 'report' . rand() . '.pdf';
